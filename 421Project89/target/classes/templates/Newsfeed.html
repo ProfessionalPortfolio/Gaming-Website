@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>NewsFeed</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/NewsfeedStyle.css}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <style>
+        .topnav {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #333;
+        }
+
+        .topnav a{
+            float: left;
+        }
+
+        .topnav a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+        .topnav a:hover:not(.active) {
+            background-color: #111;
+        }
+
+        .active {
+            background-color: #4CAF50;
+        }
+    </style>
+    <div class="topnav">
+        <a  href="/menu">Home</a>
+        <a href="/review">Game Reviews</a>
+        <a class="active" href="/NewsFeed">Newsfeed</a>
+        <a href="/chatroom">Chatrooms</a>
+        <a href="/friends">Friends</a>
+        <a href="/login">Login</a>
+    </div>
+</head>
+<body style="background-color:#99aab5;">
+<form id="formGetPost" th:action="@{NewsFeed/GetPostByName}" method="get">
+    <label>Get posts from a user: <input type="text" id="name"> <button type="button" id="searchButton">Search</button></label>
+</form>
+
+<form id="formShowAllPosts" th:action="@{NewsFeed/GetAll}" method="post">
+    <button type="button" id="showAllButton">Show All Posts</button>
+</form>
+
+<div>Create a new post</div>
+<form id="formCreatePost" th:action="@{NewsFeed/CreatePost}" method="post">
+    <div></div>
+    <label>What would you like to say?: <input type="text" id="postBody"></label>
+    <button type="button" id="newPostButton">Post</button>
+</form>
+
+<div class="newsHolder">
+    <div class="newsPost">
+        <strong>Poster</strong>
+        <p>Post content</p>
+        <p class="num">Post #</p>
+    </div>
+    <div class="newsPost">
+        <strong>Allen</strong>
+        <p>This is a post by me</p>
+        <p class="num">1</p>
+    </div>
+    <div class="newsPost">
+        <strong>Bob</strong>
+        <p>This is a post by bob</p>
+        <p class="num">2</p>
+    </div>
+    <div class="newsPost">
+        <strong>Someone Else</strong>
+        <p>I have no clue why backend is 404</p>
+        <p class="num">3</p>
+    </div>
+</div>
+
+<pre id="posts">
+    <p id="result"></p>
+</pre>
+
+<script>
+    /*function getAllPostings(data) {
+        let htmlString = ""
+        for (let i in data) {
+            htmlString += "<div class='newsHolder'>"
+            htmlString += "<strong>"
+            htmlString += data[i].userName
+            htmlString += "</strong>"
+            htmlString += "<p>"
+            htmlString += data[i].messageBody
+            htmlString += "</p>"
+            htmlString += "<p>"
+            htmlString += data[i].ID
+            htmlString += "</p>"
+            htmlString += "</div>"
+        }
+        let container = DOM.getElementById("newsHolder")
+        container.innerHTML = htmlString
+    }*/
+
+    /*function getFormString() {
+        let jsonStr = '';
+        jsonStr += '{';
+        jsonStr += '"ID": ';
+        jsonStr += $("#postID").val() ;
+        jsonStr += ',';
+        jsonStr += '"userName": "';
+        jsonStr += $("#postAuthor").val() ;
+        jsonStr += '",';
+        jsonStr += '"messageBody": "';
+        jsonStr += $("#postBody").val() ;
+        jsonStr += '"}'
+        return  jsonStr;
+    }*/
+
+    $("#newPostButton").click(function () {
+        $.ajax({
+            url: $("#formCreatePost").attr("action")+"?message="+ $("#postBody").val(),
+            type: $("#formCreatePost").attr("method"),
+            contentType: 'application/json',
+            success: function(data){
+                console.log(data)
+            }
+        });
+    });
+
+    $("#showAllButton").click(function () {
+        $.ajax({
+            url: $("#formShowAllPosts").attr("action"),
+            method: $("#formShowAllPosts").attr("method"),
+            contentType: 'application/json',
+            success: function (data) {
+                var display=(JSON.stringify(data).split(",").join("\n")).split("{").join("").split("}").join("\n---------------\n").split("[").join("").split("]").join("");
+                display=display.replace(/"|"/g, "\n");
+                display=display.split("|").join("\n");
+                //display=display.split("\"").join("\n");
+                document.getElementById("posts").innerHTML=display;
+            }
+        });
+    });
+
+    $("#searchButton").click(function () {
+        $.ajax({
+            url: $("#formGetPost").attr("action") + "?userName=" + $("#name").val(),
+            method: $("#formGetPost").attr("method"),
+            contentType: 'application/json',
+            success: function (data) {
+                console.log(data)
+            }
+        });
+    });
+
+</script>
+
+</body>
+</html>

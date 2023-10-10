@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <meta charset="UTF-8">
+    <title>Register</title>
+</head>
+<body style="background-color:#99aab5;">
+
+<!--<script type="text/javascript">
+    var x = document.getElementById("register");
+    new XMLHttpRequest()
+    let data = {'name':x[0],'email':x[1],'password':x[2]};
+    $.ajax({
+        url: "Http://localhost:8080/createUser",
+        type: 'POST',
+        crossDomain:true,
+        dataType: 'json',
+        contentType: 'application/json',
+        data: JSON.stringify(data),
+        success: (data) => {
+            console.log(data);
+        },
+        error: (er) => {
+            console.log(er);
+        }
+    });
+</script> -->
+<form th:action="@{/createUser}" id="register" method="post">
+    <label for="un">Username:</label><br>
+    <input type="text" id="un" name="name"><br>
+    <label for="em">Email:</label><br>
+    <input type="text" id="em" name="email"><br>
+    <label for="pw">Password:</label><br>
+    <input type="text" id="pw" name="pw"><br><br>
+    <input type="button" value="Register" id="regBut">
+</form>
+<a href="/login">Login</a>
+<script>
+    //url: $("#theVal").attr("action")+"?un="+$("#username").val() +"&"+ "pw="+$("#password").val()
+    $(document).ready($("#regBut").click(function (){
+       $.ajax({
+          url: $("#register").attr("action")+"?name="+$("#un").val()+"&email="+$("#em").val()+"&pw="+$("#pw").val(),
+           type: $("#register").attr("method"),
+           contentType: 'application/json',
+           success: function(data){
+              alert(data);
+              if(data == "User successfully created. Redirecting to login.")
+              {
+                  window.location="http://localhost:8080/login";
+              }
+           }
+
+       });
+    }));
+</script>
+</body>
+</html>

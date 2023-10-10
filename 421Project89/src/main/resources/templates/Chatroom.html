@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:position="http://www.w3.org/1999/xhtml">
+<head>
+    <link rel="stylesheet" type ="text/css" th:href ="@{/ChatRoomStyle.css}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <style>
+        .topnav {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #333;
+        }
+
+        .topnav a{
+            float: left;
+        }
+
+        .topnav a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+        .topnav a:hover:not(.active) {
+            background-color: #111;
+        }
+
+        .active {
+            background-color: #4CAF50;
+        }
+    </style>
+    <div class="topnav">
+        <a  href="/menu">Home</a>
+        <a href="/review">Game Reviews</a>
+        <a  href="/NewsFeed">Newsfeed</a>
+        <a class="active" href="/chatroom">Chatrooms</a>
+        <a  href="/friends">Friends</a>
+        <a href="/login">Login</a>
+    </div>
+</head>
+<body style="background-color:#99aab5;">
+
+
+<br>
+<div  class ="ChatContainer">
+
+    <div class ="ChatHeader">
+        <h3>Welcome to the chatroom</h3>
+
+<!----EP1------->
+        <form th:action="@{/chatroom/newUser}" id="newuser" method="post">
+            <input type ="text" name ="name" id ="text2" placeholder="Add a User"/>
+            <input type ="button"  id ="button1" value ="Add" />
+        </form>
+
+
+ <!----EP2------->
+       <form th:action="@{/chatroom/getChatUsers}" id="getUsers" method="get">
+           <input type="button" id="button2" value="Show User List">
+       </form>
+
+
+<!----EP3------->
+        <form th:action="@{/chatroom/removeUser}" id="removeUser" method="delete">
+            <input type ="text" name ="name" id ="text3" placeholder="Remove a User"/>
+            <input type="button" id="button3" value="remove">
+        </form>
+<!----EP4------->
+<form th:action="@{/chatroom/currentUser}" id="curr" method="post">
+    <input type="button" id="curuser" value="LoadData">
+</form>
+<!----EP4------->
+<form th:action="@{/chatroom/getMessages}" id="msg" method="post">
+        <input type="button" id="LoadPastChat" value="LoadChat">
+</form>
+
+
+
+    </div>
+
+    <div class="chatMessages">
+        <ul id="list">
+        </ul>
+    </div>
+
+    <div class="chatBottom">
+
+    <form th:action = "@{/chatroom/sendMessages}" id="chatForm" method="post">
+        <input type ="hidden" id ="name";/>
+        <input type ="text" name ="text" id ="text" value=''placeholder="type your chat message"/>
+        <input type ="button" id ="button4"  name="submit" value ="Post"/>
+    </form>
+
+        <script>
+
+
+
+          var theName;
+
+
+
+          $("#curuser").click(function () {
+              $.ajax({
+                  url: $("#curr").attr("action") + "?name=" + $("#text2").val(),
+                  type: $("#curr").attr("method"),
+                  contentType: 'application/json',
+                  success: function (data) {
+                      theName = data;
+                      //alert(data);
+
+                  }
+              });
+          });
+
+
+
+            $("#button1").click(function () {
+                $.ajax({
+                    url: $("#newuser").attr("action")+"?name="+$("#text2").val(),
+                    type: $("#newuser").attr("method"),
+                    contentType: 'application/json',
+                    success: function(data)
+                    {
+                       // namesList=(text2.value);
+                        listNode = document.getElementById('list'),
+                            liNode = document.createElement("LI"),
+                            txtNode = document.createTextNode("<Server> The user " + text2.value+ " has joined the chat.");
+                        liNode.appendChild(txtNode);
+                        listNode.appendChild(liNode);
+                        document.getElementById('text2').value ="";
+                    }
+                });
+
+            });
+
+
+
+            $("#button2").click(function () {
+                $.ajax({
+                    url: $("#getUsers").attr("action")+"?name="+$("#text2").val(),
+                    type: $("#getUsers").attr("method"),
+                    contentType: 'application/json',
+                    success: function(data){
+                        listNode = document.getElementById('list'),
+                            liNode = document.createElement("LI"),
+                            txtNode = document.createTextNode("<Server> The current users in the chat are: " +data+".");
+
+                        liNode.appendChild(txtNode);
+                        listNode.appendChild(liNode);
+
+                    }
+                });
+
+            });
+
+          $("#button3").click(function () {
+              $.ajax({
+                  url: $("#removeUser").attr("action")+"?name="+$("#text3").val(),
+                  type: $("#removeUser").attr("method"),
+                  contentType: 'application/json',
+                  success: function(data){
+
+                      listNode = document.getElementById('list'),
+                          liNode = document.createElement("LI"),
+                          txtNode = document.createTextNode(data);
+                      liNode.appendChild(txtNode);
+                      listNode.appendChild(liNode);
+                      document.getElementById('text3').value ="";
+
+
+                  }
+              });
+
+          });
+
+          $("#button4").click(function () {
+              $.ajax({
+                  url: $("#chatForm").attr("action")+"?name="+$("#text").val(),
+                  type: $("#chatForm").attr("method"),
+                  contentType: 'application/json',
+                  success: function(data)
+                  {
+                      var txtVal = document.getElementById('text').value;
+                      if(txtVal ==="")
+                      {
+                          alert("please enter data into the field.")
+                      }
+                      else if(theName.value==="")
+                      {
+                          alert("Please make sure you are signed in as a user")
+                      }
+                      else {
+                          listNode = document.getElementById('list'),
+                              liNode = document.createElement("LI"),
+                              txtNode = document.createTextNode(data);
+                          liNode.appendChild(txtNode);
+                          listNode.appendChild(liNode);
+                          document.getElementById('text').value ="";
+                      }
+                  }
+              });
+
+          });
+
+
+          $(document).ready($("#LoadPastChat").click(function () {
+              $.ajax({
+                  url: $("#msg").attr("action"),
+                  type: $("#msg").attr("method"),
+                  contentType: 'application/json',
+                  success: function(data)
+                  {
+
+                      var arr=[];
+                      var track=0;
+                      var j=0;
+                      var display=(JSON.stringify(data));
+
+                      display=display.replace(/"|"/g, "");
+                      display=display.replace("[", "");
+                      display=display.replace("]", "");
+
+
+
+                      while(display.indexOf(",") != -1)
+                      {
+                         // alert("should be created");
+
+                            temp = display.indexOf(",");
+
+                          listNode = document.getElementById('list'),
+                              liNode = document.createElement("LI"),
+                              txtNode = document.createTextNode(display.substr(j, temp));
+                          liNode.appendChild(txtNode);
+                          listNode.appendChild(liNode);
+
+                          //alert(display.substr(j, temp));
+
+                          var help= display.length-1;
+                         // j=temp+1;
+                          display=display.substr(temp+1,help);
+
+
+                      }
+
+                      listNode = document.getElementById('list'),
+                          liNode = document.createElement("LI"),
+                      txtNode = document.createTextNode(display.substr(display));
+                      liNode.appendChild(txtNode);
+                      listNode.appendChild(liNode);
+
+
+                  }
+              });
+          }));
+
+
+        </script>
+    </div>
+</div>
+</body>
+</html>

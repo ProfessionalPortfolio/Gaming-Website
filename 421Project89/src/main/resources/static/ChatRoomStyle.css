@@ -1,0 +1,85 @@
+.topnav {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+}
+
+.topnav a{
+    float: left;
+}
+
+.topnav a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+.topnav a:hover:not(.active) {
+    background-color: #111;
+}
+
+.active {
+    background-color: #4CAF50;
+}
+
+{
+    box-sizing: border-box;
+}
+
+.ChatContainer {
+    width: 800px;
+    height: 500px;
+    border: 2px solid #ddd;
+
+}
+
+.userContainer {
+
+    width: 200px;
+    height: 200px;
+    border: 2px solid #ddd;
+    padding-right:510px;
+
+}
+
+.ChatContainer > .ChatHeader {
+    width: 98.7%;
+    background: orangered;
+    padding: 5px;
+    border-bottom: 1px solid #ddd;
+}
+
+.ChatContainer > .ChatHeader h3 {
+    margin:0;
+    padding:0;
+    font-weight: 400;
+    color: white;
+}
+.ChatContainer > .chatMessages{
+    height:420px;
+    border-bottom: 11px solid gray;
+    margin-left: auto;
+    overflow-y:scroll;
+}
+.ChatContainer > .chatBottom form input[type ="submit"]{
+    width:8.7%;
+    padding: 9px;
+    background:gray;
+    border:1px solid #ddd;
+    cursor:pointer;
+}
+
+.ChatContainer > .chatBottom form input[type ="text"]{
+    width: 90%;
+    padding:3px;
+    padding-left: 1px;
+    border: 1px solid #ddd;
+    border-radius:5px;]
+margin:8px;
+    height:30px;
+
+}

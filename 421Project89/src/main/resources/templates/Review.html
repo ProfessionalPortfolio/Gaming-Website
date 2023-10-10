@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/review.css}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <style>
+        .topnav {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #333;
+        }
+
+        .topnav a{
+            float: left;
+        }
+
+        .topnav a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+        .topnav a:hover:not(.active) {
+            background-color: #111;
+        }
+
+        .active {
+            background-color: #4CAF50;
+        }
+    </style>
+    <div class="topnav">
+        <a  href="/menu">Home</a>
+        <a class="active" href="/review">Game Reviews</a>
+        <a  href="/NewsFeed">Newsfeed</a>
+        <a href="/chatroom">Chatrooms</a>
+        <a href="/friends">Friends</a>
+        <a href="/login">Login</a>
+    </div>
+</head>
+<body style="background-color:#99aab5;">
+
+<div id="Main_Body">
+    <aside>
+        <div>Search for reviews</div>
+        <form id="f1" th:action="@{Review/Get/Category}" method="get">
+            <label>Game Name: <input type="text" ID="answer"> <button type="button" id="button">Search</button></label>
+        </form>
+        <div>----------------------------------------------------------</div>
+        <form id="f2" th:action="@{Review/Make}" method="post">
+            <div>Would You like to Write a review</div>
+            <label>Game Name: <input type="text" ID="Game_name"> </label>
+            <div></div>
+            <label>Review: <input type="text" ID="Review_name"> </label>
+            <div></div>
+            <label>rating: <input type="number" ID="Rating"> <button type="button" id="button1">Post</button></label>
+        </form>
+        <div>----------------------------------------------------------</div>
+        <form id="f3" th:action="@{Review/newCategory}" method="post">
+            <label>Create: <input type="text" ID="newcat"> <button type="button" id="button2">Create</button></label>
+        </form>
+        <div>----------------------------------------------------------</div>
+        <form id="f4" th:action="@{Review/Delete/Category}" method="delete">
+            <label>Delete: <input type="text" ID="Deleter"> <button type="button" id="button3">Delete</button></label>
+        </form>
+        <p>
+
+        </p>
+    </aside>
+    <p>
+    <pre id="res"></pre>
+    </p>
+</div>
+
+<script>
+
+    $.ajax({
+        url: ("Review/newCategory")+"?Catname="+"world_of_war",
+        type: "post",
+        contentType: 'application/json',
+        success: function(data){
+
+
+
+        }
+    });
+
+    $.ajax({
+        url: ("Review/newCategory")+"?Catname="+"league_of_legends",
+        type: "post",
+        contentType: 'application/json',
+        success: function(data){
+
+
+
+        }
+    });
+
+
+
+
+    function getFormString() {
+        var jsonStr = '';
+        jsonStr += '{';
+        jsonStr += '"UserID": ';
+
+        jsonStr += $("#Rating").val() ;
+        jsonStr += ',';
+        jsonStr +='"Rating": ';
+        jsonStr += $("#Rating").val() ;
+        jsonStr +=',';
+        jsonStr +='"Text_writing": "';
+        jsonStr += $("#Review_name").val() ;
+        jsonStr += '",';
+        jsonStr +='"Game_Title": "';
+        jsonStr +=$("#Game_name").val() ;
+        jsonStr +='"';
+        jsonStr += '}';
+        return jsonStr;
+    }
+
+    $("#button1").click(function () {
+        console.log(getFormString());
+        $.ajax({
+            url: $("#f2").attr("action")+"?Gamename="+$("#Game_name").val(),
+            type: $("#f2").attr("method"),
+            data: getFormString(),
+            // headers:{"Gamername":$("#Game_name").val()},
+            contentType: 'application/json',
+            success: function(data){
+                return alert(data);
+
+            }
+        });
+
+    });
+
+    $("#button").click(function () {
+
+        $.ajax({
+            url: $("#f1").attr("action")+"?Catname="+$("#answer").val(),
+            type: $("#f1").attr("method"),
+
+            contentType: 'application/json',
+            success: function(data){
+                var bubba=(JSON.stringify(data).split(",").join("\n")).split("{").join("").split("}").join("\n----------------------------------------------------------------------------------------------------------------------\n").split("[").join("").split("]").join("");
+                bubba=bubba.split('"UserID":').join("<"+'posted by|').split('|').join(">");
+                bubba=bubba.split('"Rating":').join("<"+'Rating|').split('|').join(">");
+                bubba=bubba.split('"Text_writing":').join("<"+'Reveiw|').split('|').join(">");
+                bubba=bubba.split('"Game_Title":').join("<"+'Title of Game|').split('|').join(">");
+                bubba=bubba.split('"userID":').join("\n----------------------------------------------------------------------------------------------------------------------\n<"+'posted by|').split('|').join(">");
+                bubba=bubba.split('"rating":').join("<"+'Rating|').split('|').join(">");
+                bubba=bubba.split('"text_writing":').join("<"+'Reveiw|').split('|').join(">");
+                bubba=bubba.split('"game_Title":').join("<"+'Title of Game|').split('|').join(">");
+                document.getElementById("res").textContent=bubba
+                //$("#res").append(JSON.stringify(data));
+
+
+            }
+        });
+
+    });
+
+    $("#button2").click(function () {
+
+        $.ajax({
+            url: $("#f3").attr("action")+"?Catname="+$("#newcat").val(),
+            type: $("#f3").attr("method"),
+
+            contentType: 'application/json',
+            success: function(data){
+
+                //$("#res").append(JSON.stringify(data));
+
+
+            }
+        });
+
+    });
+
+    $("#button3").click(function () {
+
+        $.ajax({
+            url: $("#f4").attr("action")+"?Catname="+$("#Deleter").val(),
+            type: $("#f4").attr("method"),
+
+            contentType: 'application/json',
+            success: function(data){
+                document.getElementById("res").textContent=JSON.stringify(data);
+                //$("#res").append(JSON.stringify(data));
+
+
+            }
+        });
+
+    });
+
+</script>
+</body>
+</html>

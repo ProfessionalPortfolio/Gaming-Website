@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .topnav {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #333;
+        }
+
+        .topnav a{
+            float: left;
+        }
+
+        .topnav a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+        .topnav a:hover:not(.active) {
+            background-color: #111;
+        }
+
+        .active {
+            background-color: #4CAF50;
+        }
+    </style>
+    <div class="topnav">
+        <a  href="/menu">Home</a>
+        <a href="/review">Game Reviews</a>
+        <a  href="/NewsFeed">Newsfeed</a>
+        <a href="/chatroom">Chatrooms</a>
+        <a class="active" href="/friends">Friends</a>
+        <a href="/login">Login</a>
+    </div>\
+    <br>
+</head>
+<body style="background-color:#99aab5;font-size: large;">
+
+
+<form th:action="@{/friends/addFriend}" id="addFriend" method="post">
+    <label for="addf">Enter a username to add as a friend: </label>
+    <input id="addf" placeholder="Username" name="name" type="text">
+    <input type="button" id="sub" value="Add Friend" >
+</form>
+
+<form th:action="@{/getFriends}" id="getFriends" method="post">
+    <input type="button" id="seeAll" value="See Friends List">
+</form>
+
+<form th:action="@{/getAllUsers}" id="getAllUsers" method="post">
+    <input type="button" id="allUsers" value="List of valid usernames">
+</form>
+<table width="100%">
+
+    <tr>
+        <th><pre id="friendList"></pre></th>
+        <th><pre id="allList" ></pre></th>
+    </tr>
+</table>
+
+<script>
+    $( 'pre' ).text( $( 'pre' ).html() );
+
+    $(document).ready($("#allUsers").click(function () {
+        $.ajax({
+            url: $("#getAllUsers").attr("action"),
+            type: $("#getAllUsers").attr("method"),
+            contentType: 'application/json',
+            success: function (data) {
+                var display=(JSON.stringify(data).split(",").join("\n")).split("{").join("").split("}").join("\n---------------\n").split("[").join("").split("]").join("");
+                //display = display.split("\"");
+                display=display.replace(/"|"/g, "\n");
+                document.getElementById("allList").innerHTML="<h2>All Registered Usernames</h2>\n"+display;
+            }
+        });
+    }));
+
+    $(document).ready($("#sub").click(function () {
+        $.ajax({
+            url: $("#addFriend").attr("action")+"?name="+$("#addf").val(),
+            type: $("#addFriend").attr("method"),
+            contentType: 'application/json',
+            success: function(data){
+                alert(data);
+            }
+        });
+    }));
+//"Hub representative|Hubrep@GameHub.com"
+    // "zach|dmv5262@psu.edu"
+    $(document).ready($("#seeAll").click(function () {
+        $.ajax({
+            url: $("#getFriends").attr("action"),
+            type: $("#getFriends").attr("method"),
+            contentType: 'application/json',
+            success: function(data){
+                var display=(JSON.stringify(data).split(",").join("\n")).split("{").join("").split("}").join("\n---------------\n").split("[").join("").split("]").join("");
+                display=display.replace(/"|"/g, "\n");
+                display=display.split("|").join("\n");
+                document.getElementById("friendList").innerHTML="<h2>Friends List</h2>\n"+display;
+            }
+        });
+    }));
+
+
+</script>
+<!--<script type="text/javascript">
+    var x = document.getElementById("addf");
+    new XMLHttpRequest()
+    let data = x[0];
+    $.ajax({
+        url: "Http://localhost:8080/addFriend?name=",
+        type: 'POST',
+        crossDomain:true,
+        dataType: "${param.type}",
+        contentType: 'application/json',
+        data: JSON.stringify(data),
+        success: (data) => {
+            console.log(data);
+        },
+        error: (er) => {
+            console.log(er);
+        }
+
+
+    });
+    </script>
+<script type="text/javascript">//to show list of friends when add is clicked
+    $('#sub').click(function() {
+        console.log(getFormString());
+        $.ajax({
+            url: "Http://localhost:8080/getFriends",
+            type: 'GET',
+            data: getFormString(),
+            // headers:{"Gamername":$("#Game_name").val()},
+            contentType: 'application/json',
+            success: function(data){
+                return alert(data);
+
+            }
+        });
+    });
+</script>-->
+</body>
+</html>
+
